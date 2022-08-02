@@ -13,4 +13,13 @@ module.exports = class UserController {
       res.status(err.statusCode).json({ message: err.message });
     }
   }
+
+  async login(req, res) {
+    try {
+      let token = await this.userBusinessLogic.login(req.body);
+      res.json({ token });
+    } catch (err) {
+      res.status(err.statusCode).json({ message: err.message });
+    }
+  }
 };
