@@ -2,14 +2,38 @@ const { AppError, StatusCode } = require("../../utils/app-error");
 const ErrorMessages = require("../../Utils/errorMessages");
 const axios = require("axios");
 const CryptoJS = require("crypto-js");
+const DiagnosisRepository = require("../DataAccess/diagnosisRepository");
 
 module.exports = class DiagnosisBusinessLogic {
-  constructor() {}
+  constructor() {
+    this.diagnosisRepository = new DiagnosisRepository();
+  }
 
   async obtainSymptoms() {
     const token = await this.authAPI();
-    console.log(token);
-    return token;
+    const uri = `${process.env.URI_HEALTH_API}/symptoms`;
+
+    const config = {
+      params: { token: token, format: "json", language: "en-gb" },
+    };
+
+    const symptoms = await this.getAllSymptoms();
+
+    if (symptoms.length) return symptoms;
+
+    try {
+      let response = await axios.get(uri, config);
+      response.data.map((symptom) => {
+        this.diagnosisRepository.save({ id: symptom.ID, name: symptom.Name });
+      });
+      return response.data;
+    } catch {
+      throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
+    }
+  }
+
+  async getAllSymptoms() {
+    return await this.diagnosisRepository.getAllSymptoms();
   }
 
   async authAPI() {
@@ -27,7 +51,6 @@ module.exports = class DiagnosisBusinessLogic {
         Authorization: `Bearer ${user}:${computedHashString}`,
       },
     };
-    let token = "";
 
     try {
       let response = await axios.post(uri, null, config);
