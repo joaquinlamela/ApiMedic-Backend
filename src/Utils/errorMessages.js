@@ -8,4 +8,16 @@ const UserNotFound = "User not found with the credentials provided.";
 
 const InvalidCredentials = "Invalid credentials provided.";
 
-module.exports = { InternalServerError, WrongFormat, UserAlreadyExists };
+const NotTokenProviden = "No token provided.";
+
+const InvalidToken = "Invalid token provided.";
+
+module.exports = {
+  InternalServerError,
+  WrongFormat,
+  UserAlreadyExists,
+  InvalidCredentials,
+  UserNotFound,
+  NotTokenProviden,
+  InvalidToken,
+};

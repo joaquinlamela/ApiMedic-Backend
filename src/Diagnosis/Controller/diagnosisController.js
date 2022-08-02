@@ -6,11 +6,20 @@ module.exports = class DiagnosisController {
   }
 
   async obtainSymptoms(req, res) {
-    // try {
-    let symptoms = await this.diagnosisBusinessLogic.obtainSymptoms();
-    res.json(symptoms);
-    // } catch (err) {
-    //   res.status(err.statusCode).json({ message: err.message });
-    // }
+    try {
+      let symptoms = await this.diagnosisBusinessLogic.obtainSymptoms();
+      res.json(symptoms);
+    } catch (err) {
+      res.status(err.statusCode).json({ message: err.message });
+    }
+  }
+
+  async obtainDiagnosis(req, res) {
+    try {
+      let diagnosis = await this.diagnosisBusinessLogic.obtainDiagnosis(req);
+      res.json(diagnosis);
+    } catch (err) {
+      res.status(err.statusCode).json({ message: err.message });
+    }
   }
 };

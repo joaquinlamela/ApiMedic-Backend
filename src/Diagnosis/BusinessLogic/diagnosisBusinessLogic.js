@@ -3,10 +3,12 @@ const ErrorMessages = require("../../Utils/errorMessages");
 const axios = require("axios");
 const CryptoJS = require("crypto-js");
 const DiagnosisRepository = require("../DataAccess/diagnosisRepository");
+const UserRepository = require("../../User/DataAccess/userRepository");
 
 module.exports = class DiagnosisBusinessLogic {
   constructor() {
     this.diagnosisRepository = new DiagnosisRepository();
+    this.userRepository = new UserRepository();
   }
 
   async obtainSymptoms() {
@@ -34,6 +36,37 @@ module.exports = class DiagnosisBusinessLogic {
 
   async getAllSymptoms() {
     return await this.diagnosisRepository.getAllSymptoms();
+  }
+
+  async obtainDiagnosis(request) {
+    const token = await this.authAPI();
+    const uri = `${process.env.URI_HEALTH_API}/diagnosis`;
+
+    const user = await this.getUser(request.email);
+    const userYearOfBirth = new Date(user.dateOfBirth).getFullYear();
+    const symptoms = request.body;
+
+    const config = {
+      params: {
+        token: token,
+        format: "json",
+        language: "en-gb",
+        symptoms: symptoms,
+        gender: user.gender,
+        year_of_birth: userYearOfBirth,
+      },
+    };
+
+    try {
+      let response = await axios.get(uri, config);
+      return response.data;
+    } catch {
+      throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
+    }
+  }
+
+  async getUser(email) {
+    return await this.userRepository.getByEmail(email);
   }
 
   async authAPI() {
