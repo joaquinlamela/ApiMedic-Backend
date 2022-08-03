@@ -60,6 +60,13 @@ module.exports = class DiagnosisBusinessLogic {
     try {
       let response = await axios.get(uri, config);
       const diagnosis = response.data;
+      const consultation = {
+        diagnosis: diagnosis,
+        symptoms: symptoms,
+        email: request.userEmail,
+      };
+
+      await this.diagnosisRepository.saveConsultation(consultation);
       return diagnosis;
     } catch {
       throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
