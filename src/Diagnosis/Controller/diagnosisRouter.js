@@ -9,7 +9,7 @@ diagnosisRouter.get("/symptoms/", userAuthMiddleware, function (req, res) {
   diagnosisController.obtainSymptoms(req, res);
 });
 
-diagnosisRouter.get("/diagnosis/", userAuthMiddleware, function (req, res) {
+diagnosisRouter.get("/", userAuthMiddleware, function (req, res) {
   diagnosisController.obtainDiagnosis(req, res);
 });
 

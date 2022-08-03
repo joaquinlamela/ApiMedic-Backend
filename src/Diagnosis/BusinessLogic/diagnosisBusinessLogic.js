@@ -42,9 +42,9 @@ module.exports = class DiagnosisBusinessLogic {
     const token = await this.authAPI();
     const uri = `${process.env.URI_HEALTH_API}/diagnosis`;
 
-    const user = await this.getUser(request.email);
-    const userYearOfBirth = new Date(user.dateOfBirth).getFullYear();
-    const symptoms = request.body;
+    const user = await this.getUser(request.userEmail);
+    const userYearOfBirth = new Date(user.dataValues.dateOfBirth).getFullYear();
+    const symptoms = request.query.symptoms;
 
     const config = {
       params: {
@@ -52,14 +52,22 @@ module.exports = class DiagnosisBusinessLogic {
         format: "json",
         language: "en-gb",
         symptoms: symptoms,
-        gender: user.gender,
+        gender: user.dataValues.gender,
         year_of_birth: userYearOfBirth,
       },
     };
 
     try {
       let response = await axios.get(uri, config);
-      return response.data;
+      const diagnosis = response.data;
+      const consultation = {
+        diagnosis: diagnosis,
+        symptoms: symptoms,
+        email: request.userEmail,
+      };
+
+      await this.diagnosisRepository.saveConsultation(consultation);
+      return diagnosis;
     } catch {
       throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
     }
