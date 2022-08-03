@@ -73,6 +73,7 @@ module.exports = class DiagnosisBusinessLogic {
         diagnosis: diagnosis,
         symptoms: symptomsNames,
         email: request.userEmail,
+        confirmedDiagnosis: "",
       };
 
       await this.diagnosisRepository.saveConsultation(consultation);
@@ -112,5 +113,14 @@ module.exports = class DiagnosisBusinessLogic {
     } catch {
       throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
     }
+  }
+
+  async obtainConsultations(request) {
+    const userEmail = request.userEmail;
+    return await this.getConsultations(userEmail);
+  }
+
+  async getConsultations(userEmail) {
+    return await this.diagnosisRepository.getConsultations(userEmail);
   }
 };

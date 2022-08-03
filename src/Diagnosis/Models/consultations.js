@@ -29,6 +29,9 @@ const Consultations = sequelize.define(
     date: {
       type: Sequelize.DATE,
     },
+    confirmedDiagnosis: {
+      type: Sequelize.STRING,
+    },
   },
   {
     timestamps: false,

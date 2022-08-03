@@ -37,4 +37,12 @@ module.exports = class DiagnosisRepository {
       throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
     }
   }
+
+  async getConsultations(userEmail) {
+    try {
+      return await Consultations.findAll({ where: { email: userEmail } });
+    } catch (err) {
+      throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
+    }
+  }
 };

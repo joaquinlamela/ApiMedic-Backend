@@ -13,7 +13,7 @@ diagnosisRouter.get("/", userAuthMiddleware, function (req, res) {
   diagnosisController.obtainDiagnosis(req, res);
 });
 
-diagnosisRouter.get("consultations/", userAuthMiddleware, function (req, res) {
+diagnosisRouter.get("/consultations/", userAuthMiddleware, function (req, res) {
   diagnosisController.obtainConsultations(req, res);
 });
 
