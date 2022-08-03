@@ -22,6 +22,14 @@ module.exports = class DiagnosisRepository {
     }
   }
 
+  async getSymptom(id) {
+    try {
+      return await Symptoms.findOne({ where: { ID: id } });
+    } catch (err) {
+      throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
+    }
+  }
+
   async saveConsultation(data) {
     try {
       return await Consultations.create(data);

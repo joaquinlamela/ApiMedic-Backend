@@ -45,6 +45,14 @@ module.exports = class DiagnosisBusinessLogic {
     const user = await this.getUser(request.userEmail);
     const userYearOfBirth = new Date(user.dataValues.dateOfBirth).getFullYear();
     const symptoms = request.query.symptoms;
+    const symptomsId = JSON.parse(symptoms);
+
+    const symptomsNames = [];
+
+    for (const symptomId of symptomsId) {
+      const data = await this.getSymptom(symptomId);
+      symptomsNames.push(data.dataValues.name);
+    }
 
     const config = {
       params: {
@@ -61,8 +69,9 @@ module.exports = class DiagnosisBusinessLogic {
       let response = await axios.get(uri, config);
       const diagnosis = response.data;
       const consultation = {
+        date: Date.now(),
         diagnosis: diagnosis,
-        symptoms: symptoms,
+        symptoms: symptomsNames,
         email: request.userEmail,
       };
 
@@ -75,6 +84,10 @@ module.exports = class DiagnosisBusinessLogic {
 
   async getUser(email) {
     return await this.userRepository.getByEmail(email);
+  }
+
+  async getSymptom(id) {
+    return await this.diagnosisRepository.getSymptom(id);
   }
 
   async authAPI() {
