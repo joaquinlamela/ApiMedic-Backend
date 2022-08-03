@@ -52,7 +52,7 @@ module.exports = class DiagnosisBusinessLogic {
         format: "json",
         language: "en-gb",
         symptoms: symptoms,
-        gender: user.gender,
+        gender: user.dataValues.gender,
         year_of_birth: userYearOfBirth,
       },
     };
