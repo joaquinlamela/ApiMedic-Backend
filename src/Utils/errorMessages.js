@@ -12,6 +12,10 @@ const NotTokenProviden = "No token provided.";
 
 const InvalidToken = "Invalid token provided.";
 
+const ConsultationNotFound = "Consultation not found.";
+
+const ConsultationsNotFound = "Consultations not found.";
+
 module.exports = {
   InternalServerError,
   WrongFormat,
@@ -20,4 +24,6 @@ module.exports = {
   UserNotFound,
   NotTokenProviden,
   InvalidToken,
+  ConsultationNotFound,
+  ConsultationsNotFound,
 };

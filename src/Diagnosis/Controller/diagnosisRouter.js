@@ -17,4 +17,12 @@ diagnosisRouter.get("/consultations/", userAuthMiddleware, function (req, res) {
   diagnosisController.obtainConsultations(req, res);
 });
 
+diagnosisRouter.get("/consultation/", userAuthMiddleware, function (req, res) {
+  diagnosisController.obtainConsultation(req, res);
+});
+
+diagnosisRouter.patch("/consultation/", userAuthMiddleware, function (req, res) {
+  diagnosisController.updateConsultation(req, res);
+});
+
 module.exports = diagnosisRouter;

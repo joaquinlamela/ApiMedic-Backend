@@ -117,10 +117,62 @@ module.exports = class DiagnosisBusinessLogic {
 
   async obtainConsultations(request) {
     const userEmail = request.userEmail;
-    return await this.getConsultations(userEmail);
+    const consultations = await this.getConsultations(userEmail);
+
+    if (consultations && !consultations.length)
+      throw new AppError(
+        StatusCode.NOT_FOUND,
+        ErrorMessages.ConsultationsNotFound
+      );
+
+    return consultations;
   }
 
   async getConsultations(userEmail) {
     return await this.diagnosisRepository.getConsultations(userEmail);
+  }
+
+  async obtainConsultation(request) {
+    const userEmail = request.userEmail;
+    const consultationId = request.query.consultationId;
+
+    const consultation = await this.getConsultation(userEmail, consultationId);
+
+    if (!consultation)
+      throw new AppError(
+        StatusCode.NOT_FOUND,
+        ErrorMessages.ConsultationNotFound
+      );
+
+    return consultation;
+  }
+
+  async getConsultation(userEmail, consultationId) {
+    return await this.diagnosisRepository.getConsultation(
+      userEmail,
+      consultationId
+    );
+  }
+
+  async updateConsultation(request) {
+    const userEmail = request.userEmail;
+    const consultationId = request.query.consultationId;
+
+    const confirmedDiagnosis = request.body.confirmedDiagnosis;
+
+    const updatedConsultation =
+      await this.diagnosisRepository.updateConsultation(
+        userEmail,
+        consultationId,
+        confirmedDiagnosis
+      );
+
+    if (updatedConsultation && !updatedConsultation.length)
+      throw new AppError(
+        StatusCode.NOT_FOUND,
+        ErrorMessages.ConsultationNotFound
+      );
+
+    return updatedConsultation;
   }
 };

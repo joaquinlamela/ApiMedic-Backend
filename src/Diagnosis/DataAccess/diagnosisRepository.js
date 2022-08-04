@@ -45,4 +45,29 @@ module.exports = class DiagnosisRepository {
       throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
     }
   }
+
+  async getConsultation(userEmail, consultationId) {
+    try {
+      return await Consultations.findOne({
+        where: { email: userEmail, id: consultationId },
+      });
+    } catch (err) {
+      throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
+    }
+  }
+
+  async updateConsultation(userEmail, consultationId, confirmedDiagnosis) {
+    try {
+      return await Consultations.update(
+        {
+          confirmedDiagnosis: confirmedDiagnosis,
+        },
+        {
+          where: { email: userEmail, id: consultationId },
+        }
+      );
+    } catch (err) {
+      throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
+    }
+  }
 };
