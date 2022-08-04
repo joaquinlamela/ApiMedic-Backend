@@ -45,6 +45,14 @@ module.exports = class DiagnosisBusinessLogic {
     const user = await this.getUser(request.userEmail);
     const userYearOfBirth = new Date(user.dataValues.dateOfBirth).getFullYear();
     const symptoms = request.query.symptoms;
+    const symptomsId = JSON.parse(symptoms);
+
+    const symptomsNames = [];
+
+    for (const symptomId of symptomsId) {
+      const data = await this.getSymptom(symptomId);
+      symptomsNames.push(data.dataValues.name);
+    }
 
     const config = {
       params: {
@@ -61,9 +69,11 @@ module.exports = class DiagnosisBusinessLogic {
       let response = await axios.get(uri, config);
       const diagnosis = response.data;
       const consultation = {
+        date: Date.now(),
         diagnosis: diagnosis,
-        symptoms: symptoms,
+        symptoms: symptomsNames,
         email: request.userEmail,
+        confirmedDiagnosis: "",
       };
 
       await this.diagnosisRepository.saveConsultation(consultation);
@@ -75,6 +85,10 @@ module.exports = class DiagnosisBusinessLogic {
 
   async getUser(email) {
     return await this.userRepository.getByEmail(email);
+  }
+
+  async getSymptom(id) {
+    return await this.diagnosisRepository.getSymptom(id);
   }
 
   async authAPI() {
@@ -99,5 +113,66 @@ module.exports = class DiagnosisBusinessLogic {
     } catch {
       throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
     }
+  }
+
+  async obtainConsultations(request) {
+    const userEmail = request.userEmail;
+    const consultations = await this.getConsultations(userEmail);
+
+    if (consultations && !consultations.length)
+      throw new AppError(
+        StatusCode.NOT_FOUND,
+        ErrorMessages.ConsultationsNotFound
+      );
+
+    return consultations;
+  }
+
+  async getConsultations(userEmail) {
+    return await this.diagnosisRepository.getConsultations(userEmail);
+  }
+
+  async obtainConsultation(request) {
+    const userEmail = request.userEmail;
+    const consultationId = request.query.consultationId;
+
+    const consultation = await this.getConsultation(userEmail, consultationId);
+
+    if (!consultation)
+      throw new AppError(
+        StatusCode.NOT_FOUND,
+        ErrorMessages.ConsultationNotFound
+      );
+
+    return consultation;
+  }
+
+  async getConsultation(userEmail, consultationId) {
+    return await this.diagnosisRepository.getConsultation(
+      userEmail,
+      consultationId
+    );
+  }
+
+  async updateConsultation(request) {
+    const userEmail = request.userEmail;
+    const consultationId = request.query.consultationId;
+
+    const confirmedDiagnosis = request.body.confirmedDiagnosis;
+
+    const updatedConsultation =
+      await this.diagnosisRepository.updateConsultation(
+        userEmail,
+        consultationId,
+        confirmedDiagnosis
+      );
+
+    if (updatedConsultation && !updatedConsultation.length)
+      throw new AppError(
+        StatusCode.NOT_FOUND,
+        ErrorMessages.ConsultationNotFound
+      );
+
+    return updatedConsultation;
   }
 };

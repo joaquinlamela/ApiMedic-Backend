@@ -22,4 +22,37 @@ module.exports = class DiagnosisController {
       res.status(err.statusCode).json({ message: err.message });
     }
   }
+
+  async obtainConsultations(req, res) {
+    try {
+      let consultations = await this.diagnosisBusinessLogic.obtainConsultations(
+        req
+      );
+      res.json(consultations);
+    } catch (err) {
+      res.status(err.statusCode).json({ message: err.message });
+    }
+  }
+
+  async obtainConsultation(req, res) {
+    try {
+      let consultation = await this.diagnosisBusinessLogic.obtainConsultation(
+        req
+      );
+      res.json(consultation);
+    } catch (err) {
+      res.status(err.statusCode).json({ message: err.message });
+    }
+  }
+
+  async updateConsultation(req, res) {
+    try {
+      let consultation = await this.diagnosisBusinessLogic.updateConsultation(
+        req
+      );
+      res.json(consultation);
+    } catch (err) {
+      res.status(err.statusCode).json({ message: err.message });
+    }
+  }
 };

@@ -22,9 +22,50 @@ module.exports = class DiagnosisRepository {
     }
   }
 
+  async getSymptom(id) {
+    try {
+      return await Symptoms.findOne({ where: { ID: id } });
+    } catch (err) {
+      throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
+    }
+  }
+
   async saveConsultation(data) {
     try {
       return await Consultations.create(data);
+    } catch (err) {
+      throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
+    }
+  }
+
+  async getConsultations(userEmail) {
+    try {
+      return await Consultations.findAll({ where: { email: userEmail } });
+    } catch (err) {
+      throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
+    }
+  }
+
+  async getConsultation(userEmail, consultationId) {
+    try {
+      return await Consultations.findOne({
+        where: { email: userEmail, id: consultationId },
+      });
+    } catch (err) {
+      throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
+    }
+  }
+
+  async updateConsultation(userEmail, consultationId, confirmedDiagnosis) {
+    try {
+      return await Consultations.update(
+        {
+          confirmedDiagnosis: confirmedDiagnosis,
+        },
+        {
+          where: { email: userEmail, id: consultationId },
+        }
+      );
     } catch (err) {
       throw new AppError(StatusCode.SERVER, ErrorMessages.InternalServerError);
     }
